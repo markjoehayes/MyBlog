@@ -23,6 +23,24 @@ def get_post(post_id):
         abort(404)
     return post
 
+def get_comments(post_id):
+    conn = get_db_connection()
+    comments = conn.execute(
+            'SELECT * FROM comments WHERE post_id = ? ORDER BY created DESC',
+            (post_id,)
+    ).fetchall()
+    conn.close()
+    return comments
+
+def add_comments(post_id, author, content):
+    conn = get_db_connection()
+    conn.execute(
+            'INSERT INTO comments(post_id, author, content) VALUES (?,?,?)',
+            (post_id, author, content)
+            )
+    conn.commit()
+    conn.close()
+
 # create an instance of a flask app and name it app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your secret key'

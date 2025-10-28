@@ -10,14 +10,5 @@ with open('schema.sql') as f:
 # make the cursor to execute what inside the schema in database
 cur = connection.cursor()
 
-# Insert blog posts
-#cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
-#           ('First Post', 'Content for the first post')
-#            )
-#
-#cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
-#            ('Second Post', 'Content for the second post')
-#            )
-#
 connection.commit()   # commits the changes to the db
 connection.close()    # closes the connection
