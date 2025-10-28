@@ -81,8 +81,10 @@ def post(post_id):
     # we got the post the user clicked on through the function we wrote before
     # we save the value of the post in the post variable
     post = get_post(post_id)
+    # include comments
+    comments = get_comments(post_id)
     # we render the post page, pass post variable as an argument to use in the html page
-    return render_template('post.html', post=post)
+    return render_template('post.html', post=post, comments=comments)
 
 @app.route('/<int:id>/edit', methods=('GET', 'POST'))
 def edit(id):
@@ -115,3 +117,29 @@ def delete(id):
     conn.close()
     flash(f'"{post['title']}" was successfully deleted!')
     return redirect(url_for('index'))
+
+@app.route('/<int:post_id>/comment', methods=('POST',))
+def add_comment_route(post_id):
+    author = request.form['author']
+    content = request.form['content']
+
+    if not author or not content:
+        flash('Both name and comment are required!')
+    else:
+        add_comments(post_id, author, content)
+        flash('Conmment added successfuly!')
+
+    return redirect(url_for('post', post_id = post_id))
+
+# add route to delete comments (admin only)
+@app.route('/comment/<int:comment_id>/delete')
+def delete_comment(comment_id):
+    conn = get_db_connection()
+    comment = conn.execute('SELECT * FROM comments WHERE id = ?', (comment_id,)).fetchone()
+    if comment:
+        conn.execute('DELETE FROM comments WHERE id = ?', (comment_id,))
+        conn.commit()
+        flash('Comment deleted!')
+    conn.close()
+    return redirect(url_for('post', post_id=comment['post_id']))
+  
