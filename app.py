@@ -72,7 +72,7 @@ def create():
 @app.route('/')  # decorator associates the function with the root URL
 def index():
     conn = get_db_connection()
-    posts = conn.execute('SELECT * FROM posts').fetchall()
+    posts = conn.execute('SELECT * FROM posts ORDER BY created DESC').fetchall()
     conn.close()
     return render_template('index.html', posts=posts)
 
