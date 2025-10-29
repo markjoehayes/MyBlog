@@ -1,7 +1,10 @@
 import sqlite3
-from flask import Flask, render_template, request, url_for, flash, redirect
+from flask import Flask, render_template, request, url_for, flash, redirect, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.exceptions import abort
+from werkzeug.security import generate_password_hash, check_password_hash
+import hashlib
+import os
 
 
 
@@ -75,7 +78,7 @@ def login():
         if check_password_hash(PASSWORD_HASH, password):
             user = User(USER_ID)
             login_user(user)
-            flask('Logged in successfully', 'success')
+            Flask('Logged in successfully', 'success')
             return redirect(url_for('index'))
         else:
             flash('INvalid password!', 'error')
