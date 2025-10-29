@@ -1,5 +1,6 @@
 import sqlite3
 from flask import Flask, render_template, request, url_for, flash, redirect
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.exceptions import abort
 
 
@@ -45,8 +46,52 @@ def add_comments(post_id, author, content):
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your secret key'
 
+# Setup Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id
+
+USER_ID = 'admin'
+# Generate a password hash: run this once then copy the hash
+# print(generate_password_hash('your-password-here'))
+PASSWORD_HASH = 'scrypt:32768:8:1$wE5ADSJZwqW0sAit$bfa365083b82e15b917574492876c1352a8516fbcb1ede2ef03cc028b49c406c774a796b8fe0c71f224cf5cb7f59b1deffa792ca48d6c1036709e740d6b1ad8d'
+
+@login_manager.user_loader
+def load_user(user_id):
+    if user_id == USER_ID:
+        return User(user_id)
+    return home
+
+#login route
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        password = request.form.get('password')
+        # check if password is correct
+        if check_password_hash(PASSWORD_HASH, password):
+            user = User(USER_ID)
+            login_user(user)
+            flask('Logged in successfully', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('INvalid password!', 'error')
+    return render_template('login.html')
+
+# logout route
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Logged out successfully', 'success')
+    return redirect(url_for('index'))
+                                    
 # Define a view function for creation
 @app.route('/create', methods=('GET', 'POST'))
+@login_required
 def create():
     # if the user clicked on submit, it sends the post request
     if request.method == 'POST':
@@ -87,6 +132,7 @@ def post(post_id):
     return render_template('post.html', post=post, comments=comments)
 
 @app.route('/<int:id>/edit', methods=('GET', 'POST'))
+@login_required
 def edit(id):
     # Get the post to be edited by its id
     post = get_post(id)
@@ -109,6 +155,7 @@ def edit(id):
     return render_template('edit.html', post=post)
 
 @app.route('/<int:id>/delete', methods=('POST',))
+@login_required
 def delete(id):
     post = get_post(id)
     conn = get_db_connection()
