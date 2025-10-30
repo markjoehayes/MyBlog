@@ -1,15 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>{% block title %}Welcome to Mark's Blog{% endblock %}</h1>
-    <br>
-    {% for post in posts%}
-        <a href="{{ url_for('post', post_id=post['id']) }}">
-            <h2>{{ post['title'] }}</h2>
-        </a>
-        <span class="badge badge-primary">{{ post['created'] }}</span>
-        <a href="{{ url_for('edit', id=post['id']) }}">
-            <span class="badge badge-warning">Edit</span>
-        </a>   
-        <hr>
-    {% endfor %}   
+<div class="row">
+    <div class="col-md-8">
+        <h1 class="text-center">{% block title %}Welcome to Mark's Blog{% endblock %}</h1>
+        <br>
+        {% for post in posts%}
+            <a href="{{ url_for('post', post_id=post['id']) }}">
+                <h2>{{ post['title'] }}</h2>
+            </a>
+            <span class="badge badge-primary">{{ post['created'] }}</span>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('edit', id=post['id']) }}">
+                <span class="badge badge-warning">Edit</span>
+            </a>   
+            {% endif%}
+            <hr>
+        {% endfor %}
+    </div>   
+
+<!-- Simple About Me Sidebar -->
+    <div class="col-md-4">
+        <div class="bg-light p-4 rounded mt-4">
+            <h5>About Me</h5>
+            <p>Hello, My name is  Mark. I am a student at Holberton Coding School</p>
+            <p>Thank you for visiting</p>
+        </div>
+    </div>
+</div>
 {% endblock %}
