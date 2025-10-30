@@ -1,6 +1,12 @@
 h1 {
     border: 2px #eee solid;
     color: brown
-    text-align: center;
+    text-align: center !important;
     padding: 10px
+}
+
+.post-content {
+    white-space: pre-wrap; /* This preservers line breaks */
+    word-wrap: break-word;
+    line-height: 1.6; /*Better spacing betwwen lines*/
 }

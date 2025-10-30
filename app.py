@@ -78,7 +78,7 @@ def login():
         if check_password_hash(PASSWORD_HASH, password):
             user = User(USER_ID)
             login_user(user)
-            Flask('Logged in successfully', 'success')
+            flash('Logged in successfully', 'success')
             return redirect(url_for('index'))
         else:
             flash('INvalid password!', 'error')
