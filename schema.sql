@@ -1,4 +1,4 @@
--- flask_blog/schema.sql
+-- MyBlog/schema.sql
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS comments;
 

@@ -1,6 +1,6 @@
 import sqlite3
 
-# open a connection between pythin script and database.db to create it
+# open a connection between python script and database.db to create it
 connection = sqlite3.connect('database.db')
 
 # open the schema.sql to read what is inside it
